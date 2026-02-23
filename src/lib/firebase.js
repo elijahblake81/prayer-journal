@@ -10,8 +10,9 @@ import {
   getRedirectResult,
 } from 'firebase/auth'
 import {
-  getFirestore,
-  enableIndexedDbPersistence,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
   collection,
   addDoc,
   doc,
@@ -23,9 +24,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 
-// 🔐 Use the EXACT config from Firebase Console → Project settings → General → Your apps (Web)
-const firebaseConfig = {
-  
+
 const firebaseConfig = {
   apiKey: "AIzaSyCDZj4focomxoIizJv0tIq9iUMY4X3NSfg",
   authDomain: "prayer-journal-31c40.firebaseapp.com",
@@ -34,8 +33,7 @@ const firebaseConfig = {
   messagingSenderId: "813674709589",
   appId: "1:813674709589:web:a35ced66b05dfce4d74adc",
   measurementId: "G-DQ3J2VZYP4"
-};
-
+}
 
 const app = initializeApp(firebaseConfig)
 
@@ -51,7 +49,6 @@ function isIOSStandalone() {
   return isIOS && isStandalone
 }
 
-// Robust sign-in with popup (desktop) or redirect (iOS PWA)
 export async function signIn() {
   try {
     if (isIOSStandalone()) {
@@ -81,10 +78,13 @@ export async function handleRedirectResult() {
 }
 
 // ---------- FIRESTORE ----------
-export const db = getFirestore(app)
 
-// Enable offline cache; safe to ignore multi-tab error
-enableIndexedDbPersistence(db).catch(() => {})
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+})
+
 
 const prayersCol = (uid) => collection(db, 'users', uid, 'prayers')
 
