@@ -25,10 +25,27 @@ import {
 
 // Replace with your Firebase config
 const firebaseConfig = {
-  apiKey: 'AIzaSyCDZj4focomxoIizJv0tIq9iUMY4X3NSf',
-  authDomain: 'prayer-journal-31c40.firebaseapp.com',
-  projectId: 'prayer-journal-31c40',
-  appId: '1:813674709589:web:a35ced66b05dfce4d74adc',
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCDZj4focomxoIizJv0tIq9iUMY4X3NSfg",
+  authDomain: "prayer-journal-31c40.firebaseapp.com",
+  projectId: "prayer-journal-31c40",
+  storageBucket: "prayer-journal-31c40.firebasestorage.app",
+  messagingSenderId: "813674709589",
+  appId: "1:813674709589:web:a35ced66b05dfce4d74adc",
+  measurementId: "G-DQ3J2VZYP4"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
   // If you add Analytics later, include measurementId: 'G-XXXXXXX'
 }
 
