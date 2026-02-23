@@ -25,14 +25,17 @@ import {
 
 // 🔐 Use the EXACT config from Firebase Console → Project settings → General → Your apps (Web)
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY_HERE',                // e.g., "AIzaSy..."; must be exact
-  authDomain: 'prayer-journal-31c40.firebaseapp.com',
-  projectId: 'prayer-journal-31c40',
-  storageBucket: 'prayer-journal-31c40.appspot.com', // or .firebasestorage.app, either is fine if console shows it
-  messagingSenderId: '813674709589',
-  appId: '1:813674709589:web:xxxxxxxxxxxxxxxx',      // from console
-  // measurementId: 'G-XXXXXXX' // optional; do not add analytics unless you need it
-}
+  
+const firebaseConfig = {
+  apiKey: "AIzaSyCDZj4focomxoIizJv0tIq9iUMY4X3NSfg",
+  authDomain: "prayer-journal-31c40.firebaseapp.com",
+  projectId: "prayer-journal-31c40",
+  storageBucket: "prayer-journal-31c40.firebasestorage.app",
+  messagingSenderId: "813674709589",
+  appId: "1:813674709589:web:a35ced66b05dfce4d74adc",
+  measurementId: "G-DQ3J2VZYP4"
+};
+
 
 const app = initializeApp(firebaseConfig)
 
