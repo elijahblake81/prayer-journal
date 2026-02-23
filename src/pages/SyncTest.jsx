@@ -7,13 +7,27 @@ import {
   subscribePrayers,
   addPrayer,
   savePrayer,
-  removePrayer
+  removePrayer,
+  handleRedirectResult,
 } from '../lib/firebase' // path from pages → lib
 
 export default function SyncTest() {
   const [user, setUser] = useState(null)
   const [prayers, setPrayers] = useState([])
   const [draft, setDraft] = useState('')
+
+
+useEffect(() => {
+    // If we used signInWithRedirect, this completes the sign-in
+    handleRedirectResult().catch((err) => {
+      // Optional: surface errors so we can see what's wrong
+      if (err) {
+        console.error('Redirect sign-in error:', err)
+        alert(`Redirect sign-in error: ${err.code || ''} ${err.message || err}`)
+      }
+    })
+  }, [])
+
 
   useEffect(() => {
     const unsubAuth = onAuthChanged((u) => {

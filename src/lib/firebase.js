@@ -7,6 +7,7 @@ import {
   signInWithRedirect,
   signOut,
   onAuthStateChanged,
+  getRedirectResult,           // ⬅️ NEW: we’ll export a helper that uses this
 } from 'firebase/auth'
 import {
   getFirestore,
@@ -38,24 +39,50 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 const provider = new GoogleAuthProvider()
 
-export async function signIn() {
+// Helper: detect iOS in standalone (installed PWA) and use redirect sign-in to avoid popup blockers
+
+function isIOSStandalone() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isStandalone =
     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
     window.navigator.standalone === true
+  return isIOS && isStandalone
+}
 
-  // iOS PWA: use redirect (popups are blocked)
-  if (isIOS && isStandalone) {
-    return signInWithRedirect(auth, provider)
+// ✅ Hardened sign-in with error reporting
+export async function signIn() {
+  try {
+    if (isIOSStandalone()) {
+      // iOS PWAs block popups; use redirect flow
+      await signInWithRedirect(auth, provider)
+      return
+    }
+    // Desktop & normal browsers: use popup
+    return await signInWithPopup(auth, provider)
+  } catch (err) {
+    console.error('Firebase sign-in error:', err)
+    // Temporary surface so you can see what's wrong in the UI
+    alert(`Sign-in error: ${err?.code || ''} ${err?.message || err}`)
+    throw err
   }
-  // Desktop / normal browser: popup
-  return signInWithPopup(auth, provider)
 }
 
 export const signOutUser = () => signOut(auth)
 
 // 👇 This is what SyncTest imports
 export const onAuthChanged = (cb) => onAuthStateChanged(auth, cb)
+
+// ⬅️ NEW: expose a helper to handle the redirect result (mainly for iOS PWA)
+export async function handleRedirectResult() {
+  try {
+    const result = await getRedirectResult(auth)
+    return result // may be null on first load; that's OK
+  } catch (err) {
+    console.error('Redirect sign-in error:', err)
+    alert(`Redirect sign-in error: ${err?.code || ''} ${err?.message || err}`)
+    throw err
+  }
+}
 
 // ---------- FIRESTORE ----------
 export const db = getFirestore(app)
