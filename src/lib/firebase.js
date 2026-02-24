@@ -88,13 +88,24 @@ export const db = initializeFirestore(app, {
 
 const prayersCol = (uid) => collection(db, 'users', uid, 'prayers')
 
+
 export async function addPrayer(uid, prayer) {
   return addDoc(prayersCol(uid), {
-    title: prayer.title ?? '',
-    content: prayer.content ?? '',
-    answered: !!prayer.answered,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+    title:      prayer.title ?? '',
+    content:    prayer.content ?? '',
+    category:   prayer.category ?? 'General',
+    scripture:  prayer.scripture ?? '',
+    // store tags as array; accept comma-separated string too
+    tags: Array.isArray(prayer.tags)
+      ? prayer.tags
+      : (typeof prayer.tags === 'string' && prayer.tags.trim().length
+          ? prayer.tags.split(',').map(t => t.trim()).filter(Boolean)
+          : []),
+
+    answered:   false,                 // new prayers are open by default
+    createdAt:  serverTimestamp(),
+    updatedAt:  serverTimestamp(),
+
   })
 }
 

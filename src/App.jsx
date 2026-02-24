@@ -8,14 +8,18 @@ import Reminders from './pages/Reminders'
 import ReminderChecker from './components/ReminderChecker'
 import SyncTest from './pages/SyncTest'
 
-import { useAuth } from './lib/AuthProvider'   //adding for google auth  
+import { useAuth } from './lib/AuthProvider'   // for google auth
 
 export default function App() {
+  // ✅ Call the hook at the top level (not inside a function in JSX)
+  const { user, ready, signIn, signOut } = useAuth()
+
   return (
     <div className="app">
       <ReminderChecker />
       <header className="header">
         <h1 className="logo">Prayer Journal</h1>
+
         <nav className="nav">
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Prayers</NavLink>
           <NavLink to="/add" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Add Prayer</NavLink>
@@ -24,27 +28,19 @@ export default function App() {
           <NavLink to="/sync-test" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Sync Test</NavLink>
         </nav>
 
-
-      {/* AUTH AREA (top-right) */}
-      <div className="auth-area">
-        {(() => {
-          const { user, ready, signIn, signOut } = useAuth();
-        
-          if (!ready) return <span style={{ opacity: 0.7 }}>Loading…</span>;
-        
-          return user ? (
+        {/* AUTH AREA (top-right) */}
+        <div className="auth-area">
+          {!ready ? (
+            <span className="user-name">Loading…</span>
+          ) : user ? (
             <>
               <span className="user-name">{user.displayName || user.email}</span>
               <button onClick={signOut} className="btn btn-outline">Sign out</button>
             </>
           ) : (
             <button onClick={signIn} className="btn btn-primary">Sign in with Google</button>
-          );
-        })()}
-      </div>
-
-
-
+          )}
+        </div>
       </header>
 
       <main className="main">
