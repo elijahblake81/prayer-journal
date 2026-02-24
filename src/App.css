@@ -397,3 +397,15 @@
 .alert-info p {
   margin: 0 0 0.5rem;
 }
+
+/* Top-right Google Auth area in the header */
+.auth-area {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.auth-area .user-name {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
