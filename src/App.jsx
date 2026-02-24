@@ -8,7 +8,7 @@ import Reminders from './pages/Reminders'
 import ReminderChecker from './components/ReminderChecker'
 import SyncTest from './pages/SyncTest'
 
-
+import { useAuth } from './lib/AuthProvider'   //adding for google auth  
 
 export default function App() {
   return (
@@ -23,6 +23,28 @@ export default function App() {
           <NavLink to="/reminders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reminders</NavLink>
           <NavLink to="/sync-test" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Sync Test</NavLink>
         </nav>
+
+
+      {/* AUTH AREA (top-right) */}
+      <div className="auth-area">
+        {(() => {
+          const { user, ready, signIn, signOut } = useAuth();
+        
+          if (!ready) return <span style={{ opacity: 0.7 }}>Loading…</span>;
+        
+          return user ? (
+            <>
+              <span className="user-name">{user.displayName || user.email}</span>
+              <button onClick={signOut} className="btn btn-outline">Sign out</button>
+            </>
+          ) : (
+            <button onClick={signIn} className="btn btn-primary">Sign in with Google</button>
+          );
+        })()}
+      </div>
+
+
+
       </header>
 
       <main className="main">
