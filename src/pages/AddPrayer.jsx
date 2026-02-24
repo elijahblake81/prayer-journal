@@ -1,36 +1,56 @@
+// src/pages/AddPrayer.jsx
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loadPrayers, savePrayers } from '../lib/storage'
 import { format } from 'date-fns'
 
-const CATEGORIES = ['Thanksgiving', 'Supplication', 'Intercession', 'Confession', 'Worship', 'Other']
+// 🔹 New: auth + Firestore helpers
+import { useAuth } from '../lib/AuthProvider'
+import { addPrayer } from '../lib/firebase'
+
+// Keep your original categories for the dropdown
+const CATEGORIES = [
+  'Thanksgiving',
+  'Supplication',
+  'Intercession',
+  'Confession',
+  'Worship',
+  'Other',
+]
 
 export default function AddPrayer() {
   const navigate = useNavigate()
+
+  // 🔹 New: read auth status
+  const { ready, user } = useAuth()
+
+  // Keep your original field structure so the UI looks identical
   const [content, setContent] = useState('')
   const [category, setCategory] = useState(CATEGORIES[0])
   const [tags, setTags] = useState('')
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [scripture, setScripture] = useState('')
 
-  function handleSubmit(e) {
+  // 🔹 Gate by auth (prevents odd flashes / errors)
+  if (!ready) return null
+  if (!user) return <div style={{ padding: 16 }}>Please sign in to add prayers.</div>
+
+  // 🔹 New: Save to Firestore instead of localStorage
+  async function handleSubmit(e) {
     e.preventDefault()
     if (!content.trim()) return
 
-    const prayers = loadPrayers()
-    const prayer = {
-      id: crypto.randomUUID(),
+    await addPrayer(user.uid, {
+      // We keep your field names to preserve look/feel.
+      // The Firestore helper will set createdAt/updatedAt server timestamps too.
       content: content.trim(),
       category,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-      date,
-      scripture: scripture.trim() || null,
-      answered: null,
-      createdAt: new Date().toISOString(),
-    }
-    prayers.unshift(prayer)
-    savePrayers(prayers)
-    navigate('/')
+      scripture: scripture.trim() || '',
+      tags,          // helper converts "a, b" -> ["a","b"]
+      date,          // keep the user-selected date as a string (for display/filter)
+      title: '',     // optional field (unused by this form, but supported)
+    })
+
+    navigate('/') // Prayers page will live-update via subscribePrayers
   }
 
   return (
@@ -89,7 +109,11 @@ export default function AddPrayer() {
 
         <div className="form-actions">
           <button type="submit" className="btn btn-primary">Save Prayer</button>
-          <button type="button" className="btn btn-ghost" onClick={() => navigate('/')}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => navigate('/')}
+          >
             Cancel
           </button>
         </div>
