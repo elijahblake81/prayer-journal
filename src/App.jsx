@@ -6,7 +6,6 @@ import PrayerList from './pages/PrayerList'
 import Reflection from './pages/Reflection'
 import Reminders from './pages/Reminders'
 import ReminderChecker from './components/ReminderChecker'
-import SyncTest from './pages/SyncTest'
 
 import { useAuth } from './lib/AuthProvider'   // for google auth
 
@@ -25,7 +24,6 @@ export default function App() {
           <NavLink to="/add" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Add Prayer</NavLink>
           <NavLink to="/reflection" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reflection</NavLink>
           <NavLink to="/reminders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reminders</NavLink>
-          <NavLink to="/sync-test" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Sync Test</NavLink>
         </nav>
 
         {/* AUTH AREA (top-right) */}
@@ -49,7 +47,6 @@ export default function App() {
           <Route path="/add" element={<AddPrayer />} />
           <Route path="/reflection" element={<Reflection />} />
           <Route path="/reminders" element={<Reminders />} />
-          <Route path="/sync-test" element={<SyncTest />} />
         </Routes>
       </main>
     </div>
