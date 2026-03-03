@@ -16,6 +16,7 @@ import {
   collection,
   addDoc,
   doc,
+  getDoc,
   setDoc,
   deleteDoc,
   onSnapshot,
@@ -102,11 +103,19 @@ export async function addPrayer(uid, prayer) {
           ? prayer.tags.split(',').map(t => t.trim()).filter(Boolean)
           : []),
 
-    answered:   false,                 // new prayers are open by default
-    createdAt:  serverTimestamp(),
-    updatedAt:  serverTimestamp(),
+    
+    answered:   false, // boolean when not answered; object {date,notes} when answered
+     createdAt:  serverTimestamp(),
+     updatedAt:  serverTimestamp(),
 
   })
+}
+
+// NEW: fetch a single prayer (used by Edit page)
+export async function getPrayerById(uid, id) {
+  const ref = doc(db, 'users', uid, 'prayers', id)
+  const snap = await getDoc(ref)
+  return snap.exists() ? { id: snap.id, ...snap.data() } : null
 }
 
 export async function savePrayer(uid, id, patch) {
@@ -118,6 +127,8 @@ export async function removePrayer(uid, id) {
   const ref = doc(db, 'users', uid, 'prayers', id)
   return deleteDoc(ref)
 }
+
+
 
 export function subscribePrayers(uid, cb) {
   const q = query(prayersCol(uid), orderBy('createdAt', 'desc'))

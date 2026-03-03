@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
 import { AuthProvider } from './lib/AuthProvider'
+import { ToastProvider } from './components/ToastProvider'
 
 // Register the service worker for PWA (auto updates)
 import { registerSW } from 'virtual:pwa-register'
@@ -16,7 +17,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
       <AuthProvider>
+        <ToastProvider>
         <App />
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

@@ -63,11 +63,14 @@ export default function Reminders() {
           Daily reminder
           <input
             type="time"
-            value={daily}
-            onChange={e => setDaily(e.target.value)}
+            value={reminders.daily || ''}
+            onChange={e => setReminders(r => ({ ...r, daily: e.target.value }))}
+            step={60} // 1-minute steps
+            required={false}
           />
           <span className="hint">e.g. 7:00 AM</span>
         </label>
+
         <label>
           Weekly reminder
           <select

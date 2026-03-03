@@ -1,12 +1,15 @@
 // src/components/PrayerCard.jsx
+import { useNavigate } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
+import { useState } from 'react'
 
 // NOTE: We no longer import localStorage helpers here.
 // import { loadPrayers, savePrayers } from '../lib/storage'
 
-export default function PrayerCard({ prayer, onMarkAnswered, onDelete }) {
-  // Treat answered as "truthy" if it exists (object) or true (legacy)
+export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, onDelete }) {
+  const navigate = useNavigate()
   const isAnswered = !!prayer?.answered
+  const [busy, setBusy] = useState(false) // optional local state to disable buttons during async actions
 
   // Safe conversion for multiple shapes:
   // - Firestore Timestamp (has toDate())
@@ -14,9 +17,9 @@ export default function PrayerCard({ prayer, onMarkAnswered, onDelete }) {
   // - JS Date
   const toDate = (d) => {
     if (!d) return null
-    if (typeof d?.toDate === 'function') return d.toDate()           // Firestore Timestamp
-    if (typeof d === 'string')       return parseISO(d)               // ISO string
-    if (d instanceof Date)           return d                         // JS Date
+    if (typeof d?.toDate === 'function') return d.toDate() // Firestore Timestamp
+    if (typeof d === 'string') return parseISO(d)          // ISO string
+    if (d instanceof Date) return d                        // JS Date
     return null
   }
 
@@ -30,10 +33,21 @@ export default function PrayerCard({ prayer, onMarkAnswered, onDelete }) {
     if (onDelete) {
       await onDelete(prayer.id)
     }
+
     // If you want a *temporary* fallback to the old localStorage behavior,
     // uncomment this block. Otherwise, keep all deletes in Firestore.
     // const prayers = loadPrayers().filter(p => p.id !== prayer.id)
     // savePrayers(prayers)
+  }
+
+  async function handleUnmarkClick() {
+    if (!onUnmarkAnswered || busy) return
+    try {
+      setBusy(true)
+      await onUnmarkAnswered()   // parent handles the save
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -79,11 +93,26 @@ export default function PrayerCard({ prayer, onMarkAnswered, onDelete }) {
 
       <div className="card-actions">
         {!isAnswered && (
-          <button className="btn btn-sm btn-accent" onClick={onMarkAnswered}>
+          <button className="btn btn-sm btn-accent" onClick={onMarkAnswered} disabled={busy}>
             Mark as Answered
           </button>
         )}
-        <button className="btn btn-sm btn-ghost" onClick={handleDelete}>
+
+        {isAnswered && (
+          <button className="btn btn-sm btn-ghost" onClick={handleUnmarkClick} disabled={busy}>
+            Mark as open
+          </button>
+        )}
+
+        <button
+          className="btn btn-sm btn-ghost"
+          onClick={() => navigate(`/prayers/${prayer.id}/edit`)}
+          disabled={busy}
+        >
+          Edit
+        </button>
+
+        <button className="btn btn-sm btn-ghost" onClick={handleDelete} disabled={busy}>
           Delete
         </button>
       </div>

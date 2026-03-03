@@ -16,17 +16,24 @@ export default function MarkAnsweredModal({ prayer, onClose, onSave }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <h3>Mark as Answered</h3>
-        <p className="modal-preview">{prayer.content.slice(0, 100)}{prayer.content.length > 100 ? '...' : ''}</p>
-        <form onSubmit={handleSubmit}>
+
+        <p className="modal-preview">{prayer.content.slice(0, 100)}
+          {prayer.content.length > 100 ? '...' : ''}
+          </p>
+
+        <form className="prayer-form" onSubmit={handleSubmit}>
+
           <label>
             Date answered
             <input
               type="date"
               value={date}
               onChange={e => setDate(e.target.value)}
+              className="input"
               required
             />
           </label>
+
           <label>
             Notes <span className="hint">(optional)</span>
             <textarea
@@ -34,6 +41,7 @@ export default function MarkAnsweredModal({ prayer, onClose, onSave }) {
               onChange={e => setNotes(e.target.value)}
               placeholder="How did God answer? Any reflections..."
               rows={3}
+              className='textarea'
             />
           </label>
           <div className="form-actions">

@@ -1,12 +1,11 @@
-// src/pages/AddPrayer.jsx
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+// src/pages/EditPrayer.jsx
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { useAuth } from '../lib/AuthProvider'
-import { addPrayer } from '../lib/firebase'
+import { getPrayerById, savePrayer } from '../lib/firebase'
 import { useToast } from '../components/ToastProvider'
 
-// Keep your original categories for the dropdown
 const CATEGORIES = [
   'Thanksgiving',
   'Supplication',
@@ -16,45 +15,86 @@ const CATEGORIES = [
   'Other',
 ]
 
-export default function AddPrayer() {
+export default function EditPrayer() {
+  const { id } = useParams()
   const navigate = useNavigate()
   const { ready, user } = useAuth()
   const showToast = useToast()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  // Keep your original field structure so the UI looks identical
+  // Same fields as AddPrayer.jsx:
   const [content, setContent] = useState('')
   const [category, setCategory] = useState(CATEGORIES[0])
   const [tags, setTags] = useState('')
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [scripture, setScripture] = useState('')
 
-  // 🔹 Gate by auth (prevents odd flashes / errors)
-  if (!ready) return null
-  if (!user) return <div style={{ padding: 16 }}>Please sign in to add prayers.</div>
+  useEffect(() => {
+    if (!ready) return
+    if (!user) {
+      setError('Please sign in to edit prayers.')
+      setLoading(false)
+      return
+    }
 
-  // 🔹 New: Save to Firestore instead of localStorage
+    let alive = true
+    ;(async () => {
+      try {
+        const p = await getPrayerById(user.uid, id)
+        if (!alive) return
+
+        if (!p) {
+          setError('Prayer not found.')
+          setLoading(false)
+          return
+        }
+
+        setContent(p.content || '')
+        setCategory(p.category || CATEGORIES[0])
+        setScripture(p.scripture || '')
+        setDate(p.date || format(new Date(), 'yyyy-MM-dd'))
+        setTags(Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || ''))
+
+        setLoading(false)
+      } catch (e) {
+        console.error(e)
+        setError('Failed to load prayer.')
+        setLoading(false)
+      }
+    })()
+
+    return () => { alive = false }
+  }, [ready, user, id])
+
   async function handleSubmit(e) {
     e.preventDefault()
     if (!content.trim()) return
 
-    await addPrayer(user.uid, {
-      // We keep your field names to preserve look/feel.
-      // The Firestore helper will set createdAt/updatedAt server timestamps too.
-      content: content.trim(),
-      category,
-      scripture: scripture.trim() || '',
-      tags,          // helper converts "a, b" -> ["a","b"]
-      date,          // keep the user-selected date as a string (for display/filter)
-      title: '',     // optional field (unused by this form, but supported)
-    })
-    showToast('Prayer added!')
-
-    navigate('/') // Prayers page will live-update via subscribePrayers
+    try {
+      await savePrayer(user.uid, id, {
+        content: content.trim(),
+        category,
+        scripture: scripture.trim() || '',
+        tags,   // savePrayer will normalize it
+        date,   // keep string
+      })
+      showToast('Updated!')
+      navigate('/')
+    } catch (e) {
+      console.error(e)
+      setError('Failed to update prayer.')
+    }
   }
+
+  if (!ready) return null
+  if (loading) return <div className="page" style={{ padding: 16 }}>Loading…</div>
+  if (error) return <div className="page" style={{ padding: 16, color: 'crimson' }}>{error}</div>
 
   return (
     <div className="page">
-      <h2>Add Prayer</h2>
+      <h2>Edit Prayer</h2>
+
       <form className="prayer-form" onSubmit={handleSubmit}>
         <label>
           Prayer
@@ -76,12 +116,14 @@ export default function AddPrayer() {
               ))}
             </select>
           </label>
+
           <label>
             Date
             <input
               type="date"
               value={date}
               onChange={e => setDate(e.target.value)}
+              required
             />
           </label>
         </div>
@@ -107,12 +149,8 @@ export default function AddPrayer() {
         </label>
 
         <div className="form-actions">
-          <button type="submit" className="btn btn-primary">Save Prayer</button>
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => navigate('/')}
-          >
+          <button type="submit" className="btn btn-primary">Update Prayer</button>
+          <button type="button" className="btn btn-ghost" onClick={() => navigate('/')}>
             Cancel
           </button>
         </div>
