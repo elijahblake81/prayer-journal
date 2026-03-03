@@ -409,3 +409,69 @@
   font-size: 0.9rem;
   color: var(--text-muted);
 }
+
+/* --- Restore native date picker look & behavior --- */
+.prayer-form input[type="date"] {
+  -webkit-appearance: auto;  /* Safari/Chromium */
+  appearance: auto;          /* Standards */
+  line-height: normal;       /* undo any tight line-height that clips the icon */
+  height: auto;              /* let the browser size the control correctly */
+  padding-right: 2.25rem;    /* leave space for the calendar icon */
+  color-scheme: var(--color-scheme, dark); /* helps popover in dark themes */
+}
+
+/* Make sure the indicator is visible in dark UI */
+.prayer-form input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  filter: none;              /* avoid accidental dimming */
+  cursor: pointer;
+}
+
+/* Optional: subtle hover on the icon area */
+.prayer-form input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 0.9;
+}
+/* --- Restore native time picker look & behavior --- */
+.prayer-form input[type="time"],
+.reminder-form input[type="time"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  line-height: normal;
+  height: auto;
+  padding-right: 2.25rem;  /* leave room for the clock icon */
+  color-scheme: var(--color-scheme, dark);
+}
+
+/* Ensure the clock indicator is visible in dark themes (WebKit/Blink) */
+.prayer-form input[type="time"]::-webkit-calendar-picker-indicator,
+.reminder-form input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  filter: none;
+  cursor: pointer;
+}
+/* Toasts */
+.toast-stack {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+}
+
+.toast {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  animation: toast-in 160ms ease-out;
+  max-width: 60ch;
+}
+
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);  opacity: 1; }
+}

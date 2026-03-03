@@ -6,6 +6,7 @@ import PrayerList from './pages/PrayerList'
 import Reflection from './pages/Reflection'
 import Reminders from './pages/Reminders'
 import ReminderChecker from './components/ReminderChecker'
+import EditPrayer from './pages/EditPrayer'
 
 import { useAuth } from './lib/AuthProvider'   // for google auth
 
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="/add" element={<AddPrayer />} />
           <Route path="/reflection" element={<Reflection />} />
           <Route path="/reminders" element={<Reminders />} />
+          <Route path="/prayers/:id/edit" element={<EditPrayer />} />
         </Routes>
       </main>
     </div>
