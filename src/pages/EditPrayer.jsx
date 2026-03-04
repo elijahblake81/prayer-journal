@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { useAuth } from '../lib/AuthProvider'
-import { getPrayerById, savePrayer } from '../lib/firebase'
+import { getPrayerById, savePrayer, updatePublicFromPrivate } from '../lib/firebase'
 import { useToast } from '../components/ToastProvider'
 
 const CATEGORIES = [
@@ -79,6 +79,21 @@ export default function EditPrayer() {
         tags,   // savePrayer will normalize it
         date,   // keep string
       })
+
+     // If this prayer is currently public, mirror the safe subset to publicPrayers
+     if (prayer?.publicId) {
+       // Build the same shape the UI shows (the private "prayer" state is current enough)
+       const after = {
+         ...prayer,
+         content: content.trim(),
+         category,
+         scripture: scripture.trim() || '',
+         tags,
+         date,
+       }
+       await updatePublicPrayer(user.uid, prayer.publicId, after)
+     }
+
       showToast('Updated!')
       navigate('/')
     } catch (e) {

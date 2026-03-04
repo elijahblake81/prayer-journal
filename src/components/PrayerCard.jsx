@@ -2,10 +2,10 @@
 import { useNavigate } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
 import { useState } from 'react'
-
 import { useAuth } from '../lib/AuthProvider'
 import { incrementPrayedCount } from '../lib/firebase'
 import { useToast } from './ToastProvider'
+import { publishPrayer, unpublishPrayer } from '../lib/firebase'
 
 // NOTE: We no longer import localStorage helpers here.
 // import { loadPrayers, savePrayers } from '../lib/storage'
@@ -70,6 +70,34 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
     }
   }
 
+  async function handlePublish() {
+    if (!user || busy) return
+    try {
+      setBusy(true)
+      await publishPrayer(user.uid, prayer)
+      showToast('Shared to Public Prayers')
+    } catch (e) {
+      console.error('Publish failed', e)
+      showToast('Could not publish. Try again.', { duration: 3000 })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleUnpublish() {
+    if (!user || busy) return
+    try {
+      setBusy(true)
+      await unpublishPrayer(user.uid, prayer)
+      toast('Unshared from Public Prayers')
+    } catch (e) {
+      console.error('Unpublish failed', e)
+      toast('Could not unshare. Try again.', { duration: 3000 })
+    } finally {
+      setBusy(false)
+    }
+  }
+
 
   return (
     <article className={`prayer-card ${isAnswered ? 'answered' : ''}`}>
@@ -78,6 +106,13 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
         {createdAt && (
           <span className="date">{format(createdAt, 'MMM d, yyyy')}</span>
         )}
+
+
+        {prayer?.publicId && (
+          <span className="tag" title="This prayer is shared publicly">Public</span>
+        )}
+
+
       </div>
 
       {/* Content (safe) */}
@@ -147,6 +182,19 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
             Mark as open
           </button>
         )}
+
+
+        {!prayer?.publicId ? (
+          <button className="btn btn-sm btn-ghost" onClick={handlePublish} disabled={busy}>
+            Make public
+          </button>
+        ) : (
+          <button className="btn btn-sm btn-ghost" onClick={handleUnpublish} disabled={busy}>
+            Unshare
+          </button>
+        )}
+
+
 
         <button
           className="btn btn-sm btn-ghost"

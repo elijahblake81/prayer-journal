@@ -150,3 +150,88 @@ export async function incrementPrayedCount(uid, id) {
     updatedAt: serverTimestamp(),
   })
 }
+
+
+// --------------------------
+// Public sharing (opt-in)
+// --------------------------
+
+const publicCol = () => collection(db, 'publicPrayers')
+const publicPrayersCol = () => collection(db, 'publicPrayers');
+const publicPrayerDoc  = (id) => doc(db, 'publicPrayers', id);
+
+// Build a safe, public copy of a private prayer
+function buildPublicDoc(uid, prayer) {
+  return {
+    ownerId: uid,
+    prayerId: prayer.id,
+    content: prayer.content || '',
+    category: prayer.category || 'General',
+    scripture: prayer.scripture || '',
+    tags: Array.isArray(prayer.tags) ? prayer.tags : [],
+    isAnswered: !!prayer.answered,
+    answeredAt: prayer.answered?.date || null,
+    // public analytics (optional, reset at publish time)
+    prayedCount: Number(prayer.prayedCount || 0),
+    lastPrayedAt: prayer.lastPrayedAt || null,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    // Optional: display name if you want attribution
+    // displayName: auth.currentUser?.displayName || null,
+  }
+}
+
+// Publish (make public): create a public copy and store its id on the private doc
+export async function publishPrayer(uid, privatePrayer) {
+  const pubRef = await addDoc(publicCol(), buildPublicDoc(uid, privatePrayer))
+  await savePrayer(uid, privatePrayer.id, { publicId: pubRef.id })
+  return pubRef.id
+}
+
+// Unpublish (unshare): delete public copy and clear the reference
+export async function unpublishPrayer(uid, privatePrayer) {
+  if (!privatePrayer?.publicId) return
+  const ref = doc(db, 'publicPrayers', privatePrayer.publicId)
+  await deleteDoc(ref)
+  await savePrayer(uid, privatePrayer.id, { publicId: null })
+}
+
+// Optional: mirror selected edits to the public copy, if already public
+export async function updatePublicFromPrivate(uid, privatePrayer) {
+  if (!privatePrayer?.publicId) return
+  const ref = doc(db, 'publicPrayers', privatePrayer.publicId)
+  const patch = {
+    content: privatePrayer.content || '',
+    category: privatePrayer.category || 'General',
+    scripture: privatePrayer.scripture || '',
+    tags: Array.isArray(privatePrayer.tags) ? privatePrayer.tags : [],
+    isAnswered: !!privatePrayer.answered,
+    answeredAt: privatePrayer.answered?.date || null,
+    prayedCount: Number(privatePrayer.prayedCount || 0),
+    lastPrayedAt: privatePrayer.lastPrayedAt || null,
+    updatedAt: serverTimestamp(),
+  }
+  await setDoc(ref, patch, { merge: true })
+}
+
+// Public feed subscription
+export function subscribePublicPrayers(cb, onError) {
+  const qy = query(publicCol(), orderBy('createdAt', 'desc'))
+  return onSnapshot(qy, snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    cb(items)
+  }, onError)
+}
+
+
+
+export async function incrementPublicPrayedCount(publicId) {
+  const ref = doc(db, 'publicPrayers', publicId)
+  await updateDoc(ref, {
+    prayedCount: increment(1),
+    lastPrayedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+
+  });
+}
+
