@@ -10,13 +10,25 @@ Live site: **https://elijahblake81.github.io/prayer-journal/**
 
 ## Features
 
+
+### ✏️ Private Prayers
 - **Add Prayer** — Category, tags, date, optional Scripture reference  
-- **Edit Prayer** — Update any details later (same UI as Add)  
-- **Mark as Answered / Mark as Open** — Record when/how a prayer was answered; easily revert if tapped by mistake  
-- **“Prayed” Button** — One‑tap **increment** of a `prayedCount` with `lastPrayedAt` timestamp  
-- **Reminders** — Daily **time** picker and optional weekly reminders using the browser Notification API  
-- **Reflection** — Past 7 days view plus “Answered this month”  
-- **Toasts** — Non‑blocking feedback on save/update/mark/unmark/delete/prayed
+- **Edit Prayer** — Same UI as Add  
+- **Mark as Answered / Mark as Open** — Track answered prayers with notes  
+- **🙏 “Prayed” Button** — Atomically increments `prayedCount` and updates `lastPrayedAt`  
+- **Reflection View** — Past 7 days, answered this month  
+- **Reminders** — Daily (native time picker) and weekly browser notifications  
+
+### 🌍 Public Feed (NEW)
+- **Make Public** — Publish a prayer to a global read‑only feed  
+- **Public Prayers Page** — Everyone can view all public prayers  
+- **Public Prayed Count** — Visitors can click **“Prayed”** on public posts  
+- **Data Separation**  
+  - Private prayers → `users/{uid}/prayers/{id}`  
+  - Public prayers → `publicPrayers/{publicId}`  
+  - Only you can publish/unpublish your prayers  
+  - No email or personal identity is stored in public posts 
+
 
 ---
 
