@@ -15,33 +15,38 @@ export default function App() {
   const { user, ready, signIn, signOut } = useAuth()
 
   return (
-    <div className="app">
-      <ReminderChecker />
-      <header className="header">
-        <h1 className="logo">Prayer Journal</h1>
+    
+<div className="app">
+  <ReminderChecker />
+  <header className="header">
+    <div className="header-inner">
+      <h1 className="logo">Prayer Journal</h1>
 
-        <nav className="nav">
-          <NavLink to="/" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Prayers</NavLink>
-          <NavLink to="/add" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Add Prayer</NavLink>
-          <NavLink to="/reflection" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reflection</NavLink>
-          <NavLink to="/reminders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reminders</NavLink>
-          <NavLink to="/public" className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>Public</NavLink>
-        </nav>
+      <nav className="nav" aria-label="Main">
+        <NavLink to="/" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Prayers</NavLink>
+        <NavLink to="/add" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Add Prayer</NavLink>
+        <NavLink to="/reflection" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reflection</NavLink>
+        <NavLink to="/reminders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reminders</NavLink>
+        <NavLink to="/public" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Public</NavLink>
+      </nav>
 
-        {/* AUTH AREA (top-right) */}
-        <div className="auth-area">
-          {!ready ? (
-            <span className="user-name">Loading…</span>
-          ) : user ? (
-            <>
-              <span className="user-name">{user.displayName || user.email}</span>
-              <button onClick={signOut} className="btn btn-outline">Sign out</button>
-            </>
-          ) : (
-            <button onClick={signIn} className="btn btn-primary">Sign in with Google</button>
-          )}
-        </div>
-      </header>
+      {/* AUTH AREA (top-right) */}
+      <div className="auth-area">
+        {!ready ? (
+          <span className="user-name">Loading…</span>
+        ) : user ? (
+          <>
+            <span className="user-name">{user.displayName || user.email}</span>
+            <button onClick={signOut} className="btn btn-outline">Sign out</button>
+          </>
+        ) : (
+          <button onClick={signIn} className="btn btn-primary">Sign in with Google</button>
+        )}
+      </div>
+    </div>
+  </header>
+
+
 
       <main className="main">
         <Routes>

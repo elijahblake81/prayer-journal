@@ -7,12 +7,29 @@
 .header {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
+  /* CHANGED: move spacing from header to header-inner and let the inner control layout */
+  /* padding: 1rem 1.5rem; */
+  /* remove */
+  /* display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; */
+  /* remove */
+}
+
+/* NEW: wrapper that controls width + layout on desktop/tablet and stacks on mobile */
+.header-inner {
+  max-width: 1100px;
+  /* NEW */
+  margin: 0 auto;
+  /* NEW */
   padding: 1rem 1.5rem;
-  display: flex;
+  /* NEW (replaces header padding) */
+  display: grid;
+  /* NEW */
+  grid-template-columns: 1fr auto auto;
+  /* NEW  title | nav | auth */
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  /* NEW */
   gap: 1rem;
+  /* NEW */
 }
 
 .logo {
@@ -24,6 +41,8 @@
 .nav {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  /* NEW: allow wrap on medium widths */
 }
 
 .nav-link {
@@ -474,4 +493,80 @@
 @keyframes toast-in {
   from { transform: translateY(8px); opacity: 0; }
   to   { transform: translateY(0);  opacity: 1; }
+}
+/* MOBILE LAYOUT FIXES */
+@media (max-width: 600px) {
+  .header-inner {
+    grid-template-columns: 1fr;
+    /* stack title, nav, auth */
+    justify-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .nav {
+    width: 100%;
+    flex-direction: column;
+    /* stack links */
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-link {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    padding: 10px 12px;
+  }
+
+  .auth-area {
+    width: 100%;
+    margin-left: 0;
+    /* reset desktop push-right */
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  /* USER NAME + SIGN OUT: stack vertically */
+  .auth-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* PAGE CONTAINER */
+  .container,
+  .content-wrapper {
+    padding: 0 12px;
+  }
+
+  /* PRAYER CARDS */
+  .prayer-card {
+    margin: 12px 0;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  /* PRAYER CARD BUTTONS */
+  .prayer-card-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* SECTION TITLE */
+  h1,
+  h2,
+  h3 {
+    text-align: center;
+  }
 }
