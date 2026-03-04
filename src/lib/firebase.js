@@ -18,11 +18,13 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
   deleteDoc,
   onSnapshot,
   query,
   orderBy,
   serverTimestamp,
+  increment,
 } from 'firebase/firestore'
 
 
@@ -135,5 +137,16 @@ export function subscribePrayers(uid, cb) {
   return onSnapshot(q, (snap) => {
     const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
     cb(items)
+  })
+}
+
+
+// Atomically increment prayedCount and set lastPrayedAt server-side
+export async function incrementPrayedCount(uid, id) {
+  const ref = doc(db, 'users', uid, 'prayers', id)
+  await updateDoc(ref, {
+    prayedCount: increment(1),
+    lastPrayedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   })
 }

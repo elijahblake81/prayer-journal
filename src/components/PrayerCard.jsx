@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
 import { useState } from 'react'
 
+import { useAuth } from '../lib/AuthProvider'
+import { incrementPrayedCount } from '../lib/firebase'
+import { useToast } from './ToastProvider'
+
 // NOTE: We no longer import localStorage helpers here.
 // import { loadPrayers, savePrayers } from '../lib/storage'
 
@@ -10,7 +14,8 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
   const navigate = useNavigate()
   const isAnswered = !!prayer?.answered
   const [busy, setBusy] = useState(false) // optional local state to disable buttons during async actions
-
+  const { user } = useAuth()
+  const { showToast } = useToast()
   // Safe conversion for multiple shapes:
   // - Firestore Timestamp (has toDate())
   // - ISO string
@@ -50,6 +55,22 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
     }
   }
 
+  
+  async function handlePrayedClick() {
+    if (!user || busy) return
+    try {
+      setBusy(true)
+      await incrementPrayedCount(user.uid, prayer.id)
+      showToast('🙏 Noted — praying with you')
+    } catch (e) {
+      console.error('Failed to increment prayed count', e)
+      showToast('Could not record “Prayed”. Try again.', { duration: 3000 })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+
   return (
     <article className={`prayer-card ${isAnswered ? 'answered' : ''}`}>
       <div className="prayer-meta">
@@ -61,6 +82,23 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
 
       {/* Content (safe) */}
       <p className="prayer-content">{prayer?.content ?? ''}</p>
+
+
+      {/* Prayed count + last prayed time */}
+      <div className="tags" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="tag">
+          Prayed {Number(prayer?.prayedCount || 0)} {Number(prayer?.prayedCount || 0) === 1 ? 'time' : 'times'}
+        </span>
+        {prayer?.lastPrayedAt && (
+          <span className="date">
+            Last prayed {format(
+              typeof prayer.lastPrayedAt?.toDate === 'function' ? prayer.lastPrayedAt.toDate() : toDate(prayer.lastPrayedAt),
+              'MMM d, yyyy h:mm a'
+            )}
+          </span>
+        )}
+      </div>
+
 
       {/* Optional scripture */}
       {prayer?.scripture && (
@@ -92,6 +130,12 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
       )}
 
       <div className="card-actions">
+      
+        <button className="btn btn-sm btn-primary" onClick={handlePrayedClick} disabled={busy}>
+          🙏 Prayed
+        </button>
+
+
         {!isAnswered && (
           <button className="btn btn-sm btn-accent" onClick={onMarkAnswered} disabled={busy}>
             Mark as Answered
