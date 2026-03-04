@@ -1,71 +1,52 @@
 # Prayer Journal
 
-A personal prayer journal app with reminders, reflection views, and answered-prayer tracking. Hosted free on GitHub Pages.
+A personal prayer journal (**PWA‑friendly**) with reminders, reflection views, answered‑prayer tracking, and a simple “Prayed” button to record each time you pray. Hosted on **GitHub Pages**.
+
+Live site: **https://elijahblake81.github.io/prayer-journal/**
+
+> ℹ️ **Sign‑in required:** Use **“Sign in with Google”** to sync your prayers to **Firebase Firestore**. When signed out, the app can still work in a limited, local‑only mode.
+
+---
 
 ## Features
 
-- **Add Prayer** — Category, tags, date, optional Scripture reference
-- **Reminders** — Daily and/or weekly browser notifications
-- **Mark as Answered** — Record when and how God answered, with notes
-- **Reflection** — Past 7 days view + "Answered this month"
+- **Add Prayer** — Category, tags, date, optional Scripture reference  
+- **Edit Prayer** — Update any details later (same UI as Add)  
+- **Mark as Answered / Mark as Open** — Record when/how a prayer was answered; easily revert if tapped by mistake  
+- **“Prayed” Button** — One‑tap **increment** of a `prayedCount` with `lastPrayedAt` timestamp  
+- **Reminders** — Daily **time** picker and optional weekly reminders using the browser Notification API  
+- **Reflection** — Past 7 days view plus “Answered this month”  
+- **Toasts** — Non‑blocking feedback on save/update/mark/unmark/delete/prayed
+
+---
+
+## How it stores your data
+
+- **Signed in:** Data is stored under your Google account in **Firebase Firestore** (per‑user path `users/{uid}/prayers`).  
+- **Signed out (fallback):** Some actions may use the browser’s **localStorage** only; they won’t sync until you sign in.  
+- **Privacy:** Your private prayers are only readable by you. (Public sharing is not enabled yet.)
+
+---
+
+## Tech Stack
+
+- **React 18** + **Vite**
+- **React Router**
+- **Firebase** (Auth: Google; Firestore with local cache)
+- **date‑fns**
+- Lightweight global **Toast** provider
+- Deployed to **GitHub Pages**
+
+---
 
 ## Run Locally
 
-1. Install [Node.js](https://nodejs.org/) (v18+)
-2. Clone this repo and install dependencies:
+1) **Prereqs**
+- https://nodejs.org/ **v18+**  
+- A Firebase project (if you want to run with your own backend)
 
+2) **Clone & install**
 ```bash
 git clone https://github.com/elijahblake81/prayer-journal.git
 cd prayer-journal
 npm install
-```
-
-3. Start the dev server:
-
-```bash
-npm run dev
-```
-
-4. Open http://localhost:5173
-
-## Deploy to GitHub Pages (Free)
-
-1. Create a new repo on GitHub: [github.com/new](https://github.com/new)  
-   - Name it `prayer-journal` (or update `base` in `vite.config.js` to match your repo name)
-
-2. Push this project:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/elijahblake81/prayer-journal.git
-git push -u origin main
-```
-
-3. Enable GitHub Pages:
-   - Repo → **Settings** → **Pages**
-   - Under "Build and deployment", set **Source** to **GitHub Actions**
-
-4. After the workflow runs, your site will be at:
-   - `https://elijahblake81.github.io/prayer-journal/`
-
-## Data Storage
-
-All data is stored in your browser's **localStorage**. Nothing is sent to a server. Your prayers stay on your device.
-
-## Reminders
-
-Reminders use the browser Notification API. For them to work:
-
-- Allow notifications when prompted
-- Keep the tab open (or pinned) — background tabs can still receive notifications
-- Set your preferred daily time and/or weekly day in **Reminders**
-
-## Tech Stack
-
-- React 18 + Vite
-- React Router
-- date-fns
-- localStorage
