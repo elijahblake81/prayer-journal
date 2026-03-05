@@ -18,17 +18,19 @@ export default function App() {
     
 <div className="app">
   <ReminderChecker />
-  <header className="header">
-    <div className="header-inner">
-      <h1 className="logo">Prayer Journal</h1>
 
-      <nav className="nav" aria-label="Main">
-        <NavLink to="/" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Prayers</NavLink>
-        <NavLink to="/add" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Add Prayer</NavLink>
-        <NavLink to="/reflection" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reflection</NavLink>
-        <NavLink to="/reminders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reminders</NavLink>
-        <NavLink to="/public" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Public</NavLink>
-      </nav>
+      <header className="header">
+        <div className="header-inner">
+          <h1 className="logo">Prayer Journal</h1>
+
+          <nav className="nav" aria-label="Main">
+            <NavLink to="/" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Prayers</NavLink>
+            <NavLink to="/add" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Add Prayer</NavLink>
+            <NavLink to="/reflection" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reflection</NavLink>
+            <NavLink to="/reminders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Reminders</NavLink>
+            <NavLink to="/public" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Public</NavLink>
+          </nav>
+
 
       {/* AUTH AREA (top-right) */}
       <div className="auth-area">
