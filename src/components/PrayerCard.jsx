@@ -196,17 +196,32 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
 
 
 
-        <button
-          className="btn btn-sm btn-ghost"
-          onClick={() => navigate(`/prayers/${prayer.id}/edit`)}
-          disabled={busy}
-        >
-          Edit
-        </button>
+        
+       {/* Edit = pencil */}
+       <button
+         className="btn-icon"
+         onClick={() => navigate(`/prayers/${prayer.id}/edit`)}
+         disabled={busy}
+         aria-label="Edit"
+         title="Edit"
+       >
+         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+           <path d="M3 17.25V21h3.75l11-11-3.75-3.75-11 11zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
+         </svg>
+       </button>      
+       {/* Delete = red X */}
+       <button
+         className="btn-icon danger"
+         onClick={handleDelete}
+         disabled={busy}
+         aria-label="Delete"
+         title="Delete"
+       >
+         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+           <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 1 0-1.41 1.41L10.59 12l-4.9 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.9a1 1 0 0 0 1.41-1.41L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4z"/>
+         </svg>
+       </button>
 
-        <button className="btn btn-sm btn-ghost" onClick={handleDelete} disabled={busy}>
-          Delete
-        </button>
       </div>
     </article>
   )

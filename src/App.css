@@ -570,3 +570,69 @@
     text-align: center;
   }
 }
+
+
+/* Mobile nav: compact horizontal scroll (no hamburger JS required) */
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .nav::-webkit-scrollbar {
+    height: 6px;
+  }
+  .nav::-webkit-scrollbar-thumb {
+    background: var(--bg-elevated);
+    border-radius: 999px;
+  }
+
+  /* Make links more compact */
+  .nav-link {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+  }
+}
+
+/* Compact icon buttons */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-icon:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+
+.btn-icon.danger {
+  color: #ff5b5b;
+  border-color: rgba(255, 91, 91, 0.35);
+}
+
+.btn-icon.danger:hover {
+  background: rgba(255, 91, 91, 0.08);
+}
+
+/* Make card actions wrap neatly on narrow screens */
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
