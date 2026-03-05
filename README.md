@@ -36,7 +36,8 @@ Live site: **https://elijahblake81.github.io/prayer-journal/**
 
 - **Signed in:** Data is stored under your Google account in **Firebase Firestore** (per‑user path `users/{uid}/prayers`).  
 - **Signed out (fallback):** Some actions may use the browser’s **localStorage** only; they won’t sync until you sign in.  
-- **Privacy:** Your private prayers are only readable by you. (Public sharing is not enabled yet.)
+- **Privacy:** Your private prayers are only readable by you. 
+- **Public Shared Prayers:** Only show your prayer, not your name or any info.
 
 ---
 
