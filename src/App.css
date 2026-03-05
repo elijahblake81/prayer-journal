@@ -46,11 +46,16 @@
 }
 
 .nav-link {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.9rem;
   color: var(--text-muted);
   text-decoration: none;
-  border-radius: 6px;
-  transition: color 0.2s, background 0.2s;
+  border-radius: 999px;
+  /* pill look */
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background .2s, color .2s, border-color .2s;
+  white-space: nowrap;
+  /* keep each item on one line for horizontal scroll */
 }
 
 .nav-link:hover {
@@ -61,6 +66,7 @@
 .nav-link.active {
   color: var(--accent);
   background: var(--accent-glow);
+  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
 }
 
 .main {
@@ -572,35 +578,188 @@
 }
 
 
-/* Mobile nav: compact horizontal scroll (no hamburger JS required) */
-@media (max-width: 640px) {
-  .header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
+/* ===== Mobile only: compact header + horizontal scroll nav ===== */
+@media (max-width: 600px) {
+  .header-inner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 8px;
+    padding: 10px 14px;
   }
 
+  .logo {
+    font-size: 1.2rem;
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Make nav a horizontal scroller */
   .nav {
+    width: 100%;
     display: flex;
+    flex-direction: row;
+    /* row on mobile */
+    flex-wrap: nowrap;
+    /* no wrapping */
     overflow-x: auto;
-    gap: 0.5rem;
-    padding-bottom: 0.25rem;
+    /* swipe left/right */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    gap: 8px;
+    padding: 6px 2px;
+    scrollbar-width: none;
+    /* Firefox: hide scrollbar */
   }
 
   .nav::-webkit-scrollbar {
-    height: 6px;
-  }
-  .nav::-webkit-scrollbar-thumb {
-    background: var(--bg-elevated);
-    border-radius: 999px;
+    display: none;
   }
 
-  /* Make links more compact */
+  /* WebKit: hide scrollbar */
+
   .nav-link {
-    padding: 0.5rem 0.75rem;
+    flex: 0 0 auto;
+    /* keep natural width */
     white-space: nowrap;
+    /* no line breaks */
+    padding: 8px 14px;
+    border-radius: 999px;
+    scroll-snap-align: start;
+  }
+
+  /* Auth row compact & centered */
+  .auth-area {
+    width: 100%;
+    margin-left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Tighten page spacing */
+  .main {
+    padding: 12px 14px 24px;
+  }
+
+  .prayer-card {
+    margin: 12px 0;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .card-actions {
+    flex-wrap: wrap;
+  }
+
+  /* Optional: faint separator */
+  .header::after {
+    content: "";
+    display: block;
+    height: 1px;
+    background: var(--border);
+    margin-top: 4px;
+    opacity: 0.6;
   }
 }
+
+
+
+/* ===== Mobile (≤600px): compact header + tighter nav pills ===== */
+@media (max-width: 600px) {
+
+  /* Header: reduce padding and gaps */
+  .header-inner {
+    grid-template-columns: 1fr;
+    /* title, nav, auth stacked */
+    justify-items: center;
+    gap: 6px;
+    /* ↓ from 10px */
+    padding: 8px 10px;
+    /* ↓ from 10–12px */
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    /* slightly smaller title */
+    line-height: 1.2;
+    margin: 0;
+    /* ensure no extra margin */
+  }
+
+  /* Horizontal scroll nav: tighter spacing */
+  .nav {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    /* keep horizontal */
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    gap: 6px;
+    /* ↓ from 8–10px */
+    padding: 3px 2px;
+    /* ↓ from 6px */
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-link {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 6px 10px;
+    /* ↓ from 8–14px */
+    border-radius: 999px;
+    font-size: 0.95rem;
+    /* keeps readability */
+    scroll-snap-align: start;
+  }
+
+  /* Auth row: compress height */
+  .auth-area {
+    width: 100%;
+    margin-left: 0;
+    display: flex;
+    flex-direction: row;
+    /* keep in one line to save height */
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    /* tighter between name + button */
+  }
+
+  .auth-area .btn {
+    /* smaller button */
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    line-height: 1.1;
+  }
+
+  .auth-area .user-name {
+    font-size: 0.9rem;
+  }
+
+  /* Optional: tighten page spacing below header a touch */
+  .main {
+    padding: 10px 12px 22px;
+  }
+
+  /* Optional: tone down the separator height */
+  .header::after {
+    height: 1px;
+    opacity: 0.5;
+    margin-top: 2px;
+  }
+}
+
+
+
 
 /* Compact icon buttons */
 .btn-icon {
@@ -629,10 +788,4 @@
   background: rgba(255, 91, 91, 0.08);
 }
 
-/* Make card actions wrap neatly on narrow screens */
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
+
