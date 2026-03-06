@@ -316,7 +316,7 @@
 
 /* ===========================
    MOBILE LAYOUT (≤600px)  
-   
+
    =========================== */
 
 @media (max-width: 600px) {
@@ -362,4 +362,90 @@
     padding: 14px;
     border-radius: 10px;
   }
+}
+/* ============================================
+   PRAYER CARD — CLEAN ACTION BAR
+   ============================================ */
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+/* Small badge for "Prayed X times" */
+.prayer-badge {
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Base action button */
+.card-actions .btn-action {
+  background: var(--bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.card-actions .btn-action:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+/* Special "Prayed" button */
+.btn-prayed {
+  background: rgba(87, 119, 255, 0.15);
+  border: 1px solid rgba(87, 119, 255, 0.35);
+  color: #aebcff;
+}
+
+.btn-prayed:hover {
+  background: rgba(87, 119, 255, 0.25);
+  color: white;
+}
+
+/* Icon buttons — you already have these, but we keep them consistent */
+.btn-icon {
+  width: 32px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.btn-icon.danger {
+  color: #ff5b5b;
+  border-color: rgba(255, 91, 91, 0.35);
+}
+
+.btn-icon.danger:hover {
+  background: rgba(255, 91, 91, 0.08);
+}
+/* Meta row under content: prayed count + last prayed */
+.prayer-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 4px;
 }

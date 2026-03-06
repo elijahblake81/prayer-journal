@@ -13,25 +13,34 @@ function toJsDate(d) {
 
 export default function PublicPrayerCard({ prayer }) {
   const [busy, setBusy] = useState(false)
-  const toast = useToast()
+  const { showToast } = useToast()
 
   const createdAt = toJsDate(prayer.createdAt)
   const lastPrayedAt = toJsDate(prayer.lastPrayedAt)
-  const count = Number(prayer?.prayedCount || 0)
+
+
+  // local optimistic count so UI updates immediately
+  const [localCount, setLocalCount] = useState(Number(prayer?.prayedCount || 0))
+  const count = localCount
+
+
 
   async function handlePrayed() {
     if (busy) return
     try {
       setBusy(true)
-      await incrementPublicPrayedCount(prayer.id)
-      toast('🙏 Counted—thank you for praying')
+      setLocalCount(c => c + 1)                   // 👈 optimistic UI bump
+      await incrementPublicPrayedCount(prayer.id) // 👈 public doc id from subscribePublicPrayers
+      showToast('🙏 Counted—thank you for praying')
     } catch (e) {
       console.error('Failed to increment public prayed count', e)
-      toast('Could not record “Prayed”. Try again.', { duration: 3000 })
+      setLocalCount(c => Math.max(0, c - 1))      // rollback on error
+      showToast('Could not record “Prayed”. Try again.', { duration: 3000 })
     } finally {
       setBusy(false)
     }
   }
+
 
   return (
     <article className="prayer-card">
