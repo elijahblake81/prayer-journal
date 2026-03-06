@@ -1,3 +1,6 @@
+/* ===========================
+   GLOBAL LAYOUT
+   =========================== */
 .app {
   min-height: 100vh;
   display: flex;
@@ -7,29 +10,17 @@
 .header {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  /* CHANGED: move spacing from header to header-inner and let the inner control layout */
-  /* padding: 1rem 1.5rem; */
-  /* remove */
-  /* display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; */
-  /* remove */
 }
 
-/* NEW: wrapper that controls width + layout on desktop/tablet and stacks on mobile */
 .header-inner {
   max-width: 1100px;
-  /* NEW */
   margin: 0 auto;
-  /* NEW */
   padding: 1rem 1.5rem;
-  /* NEW (replaces header padding) */
+
   display: grid;
-  /* NEW */
   grid-template-columns: 1fr auto auto;
-  /* NEW  title | nav | auth */
   align-items: center;
-  /* NEW */
   gap: 1rem;
-  /* NEW */
 }
 
 .logo {
@@ -38,36 +29,49 @@
   font-weight: 600;
 }
 
+/* ===========================
+   NAVIGATION — CLEAN UNDERLINE
+   =========================== */
+
 .nav {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
   flex-wrap: wrap;
-  /* NEW: allow wrap on medium widths */
+  min-width: 0;
 }
 
+/* Base link */
 .nav-link {
-  padding: 0.5rem 0.9rem;
-  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 6px;
+
   text-decoration: none;
-  border-radius: 999px;
-  /* pill look */
+  font-size: 0.95rem;
+  color: var(--text-muted);
+
   background: transparent;
-  border: 1px solid transparent;
-  transition: background .2s, color .2s, border-color .2s;
-  white-space: nowrap;
-  /* keep each item on one line for horizontal scroll */
+  border: none;
+  border-radius: 0;
+
+  line-height: 1;
+  transition: color 0.2s, background 0.2s;
 }
 
 .nav-link:hover {
   color: var(--text);
-  background: var(--bg-elevated);
 }
 
+/* Underline active style */
 .nav-link.active {
-  color: var(--accent);
-  background: var(--accent-glow);
-  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
 }
+
+/* ===========================
+   MAIN CONTENT
+   =========================== */
 
 .main {
   flex: 1;
@@ -77,10 +81,14 @@
   width: 100%;
 }
 
-/* Page */
-.page h2 {
+/* ===========================
+   PAGE / HEADERS
+   =========================== */
+
+.page h2,
+.page h1,
+.page h3 {
   margin: 0 0 1rem;
-  font-size: 1.75rem;
 }
 
 .page-header {
@@ -90,7 +98,10 @@
   margin-bottom: 1rem;
 }
 
-/* Form */
+/* ===========================
+   FORMS
+   =========================== */
+
 .prayer-form,
 .reminder-form {
   background: var(--bg-card);
@@ -146,7 +157,10 @@
   font-size: 0.85rem;
 }
 
-/* Buttons */
+/* ===========================
+   BUTTONS
+   =========================== */
+
 .btn {
   padding: 0.6rem 1.25rem;
   border-radius: 8px;
@@ -168,31 +182,15 @@
   background: var(--accent-soft);
 }
 
-.btn-accent {
-  background: var(--success-soft);
-  color: var(--success);
-}
-
-.btn-accent:hover {
-  background: rgba(92, 184, 92, 0.3);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-muted);
-}
-
-.btn-ghost:hover {
-  background: var(--bg-elevated);
-  color: var(--text);
-}
-
 .btn-sm {
   padding: 0.4rem 0.75rem;
   font-size: 0.85rem;
 }
 
-/* Filter tabs */
+/* ===========================
+   FILTER TABS
+   =========================== */
+
 .filter-tabs {
   display: flex;
   gap: 0.25rem;
@@ -218,18 +216,16 @@
   background: var(--accent-glow);
 }
 
-/* Prayer grid */
+/* ===========================
+   PRAYER CARDS
+   =========================== */
+
 .prayer-grid {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.prayer-grid.compact .prayer-card {
-  padding: 1rem;
-}
-
-/* Prayer card */
 .prayer-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -253,29 +249,15 @@
   margin-bottom: 0.5rem;
 }
 
-.category {
-  font-size: 0.8rem;
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.date {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
 .prayer-content {
   margin: 0 0 0.5rem;
   white-space: pre-wrap;
   line-height: 1.6;
 }
 
-.scripture {
-  font-style: italic;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin: 0.5rem 0;
-}
+/* ===========================
+   TAGS
+   =========================== */
 
 .tags {
   display: flex;
@@ -292,70 +274,10 @@
   color: var(--text-muted);
 }
 
-.answered-info {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
-}
+/* ===========================
+   MODAL
+   =========================== */
 
-.answered-badge {
-  color: var(--success);
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.answered-date {
-  margin-left: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.answered-notes {
-  margin: 0.35rem 0 0;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.card-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-muted);
-}
-
-.empty-state p {
-  margin: 0 0 1rem;
-}
-
-.empty-message {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-/* Reflection */
-.reflection-section {
-  margin-bottom: 2rem;
-}
-
-.reflection-section h3 {
-  margin: 0 0 0.25rem;
-  font-size: 1.25rem;
-}
-
-.section-desc {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin: 0 0 1rem;
-}
-
-/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -376,138 +298,33 @@
   width: 100%;
 }
 
-.modal h3 {
-  margin: 0 0 0.5rem;
-}
+/* ===========================
+   AUTH AREA
+   =========================== */
 
-.modal-preview {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin: 0 0 1rem;
-  font-style: italic;
-}
-
-/* Reminders */
-.reminder-info {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: var(--bg-card);
-  border-radius: 8px;
-  border: 1px solid var(--border);
-}
-
-.reminder-info p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-/* Alerts */
-.alert {
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.alert-warning {
-  background: rgba(255, 193, 7, 0.15);
-  border: 1px solid rgba(255, 193, 7, 0.3);
-}
-
-.alert-info {
-  background: var(--accent-glow);
-  border: 1px solid rgba(107, 140, 206, 0.3);
-}
-
-.alert-info p {
-  margin: 0 0 0.5rem;
-}
-
-/* Top-right Google Auth area in the header */
 .auth-area {
   margin-left: auto;
   display: flex;
   gap: 8px;
   align-items: center;
 }
+
 .auth-area .user-name {
   font-size: 0.9rem;
   color: var(--text-muted);
 }
 
-/* --- Restore native date picker look & behavior --- */
-.prayer-form input[type="date"] {
-  -webkit-appearance: auto;  /* Safari/Chromium */
-  appearance: auto;          /* Standards */
-  line-height: normal;       /* undo any tight line-height that clips the icon */
-  height: auto;              /* let the browser size the control correctly */
-  padding-right: 2.25rem;    /* leave space for the calendar icon */
-  color-scheme: var(--color-scheme, dark); /* helps popover in dark themes */
-}
+/* ===========================
+   MOBILE LAYOUT (≤600px)  
+   
+   =========================== */
 
-/* Make sure the indicator is visible in dark UI */
-.prayer-form input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 1;
-  filter: none;              /* avoid accidental dimming */
-  cursor: pointer;
-}
-
-/* Optional: subtle hover on the icon area */
-.prayer-form input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  opacity: 0.9;
-}
-/* --- Restore native time picker look & behavior --- */
-.prayer-form input[type="time"],
-.reminder-form input[type="time"] {
-  -webkit-appearance: auto;
-  appearance: auto;
-  line-height: normal;
-  height: auto;
-  padding-right: 2.25rem;  /* leave room for the clock icon */
-  color-scheme: var(--color-scheme, dark);
-}
-
-/* Ensure the clock indicator is visible in dark themes (WebKit/Blink) */
-.prayer-form input[type="time"]::-webkit-calendar-picker-indicator,
-.reminder-form input[type="time"]::-webkit-calendar-picker-indicator {
-  opacity: 1;
-  filter: none;
-  cursor: pointer;
-}
-/* Toasts */
-.toast-stack {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 9999;
-}
-
-.toast {
-  background: var(--bg-card);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.6rem 0.9rem;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-  animation: toast-in 160ms ease-out;
-  max-width: 60ch;
-}
-
-@keyframes toast-in {
-  from { transform: translateY(8px); opacity: 0; }
-  to   { transform: translateY(0);  opacity: 1; }
-}
-/* MOBILE LAYOUT FIXES */
 @media (max-width: 600px) {
   .header-inner {
     grid-template-columns: 1fr;
-    /* stack title, nav, auth */
     justify-items: center;
     gap: 10px;
-    padding: 12px 14px;
+    padding: 12px;
   }
 
   .logo {
@@ -515,333 +332,34 @@
     text-align: center;
   }
 
+  /* Mobile nav wraps to multiple rows */
   .nav {
     width: 100%;
-    flex-direction: column;
-    /* stack links */
-    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 10px;
   }
 
   .nav-link {
-    width: 100%;
-    max-width: 360px;
-    text-align: center;
-    padding: 10px 12px;
-  }
-
-  .auth-area {
-    width: 100%;
-    margin-left: 0;
-    /* reset desktop push-right */
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-  }
-
-  /* USER NAME + SIGN OUT: stack vertically */
-  .auth-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  /* PAGE CONTAINER */
-  .container,
-  .content-wrapper {
-    padding: 0 12px;
-  }
-
-  /* PRAYER CARDS */
-  .prayer-card {
-    margin: 12px 0;
-    padding: 14px;
-    border-radius: 10px;
-  }
-
-  /* PRAYER CARD BUTTONS */
-  .prayer-card-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  /* SECTION TITLE */
-  h1,
-  h2,
-  h3 {
-    text-align: center;
-  }
-}
-
-
-/* ===== Mobile only: compact header + horizontal scroll nav ===== */
-@media (max-width: 600px) {
-  .header-inner {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-  }
-
-  .logo {
-    font-size: 1.2rem;
-    text-align: center;
-    margin: 0;
-  }
-
-  /* Make nav a horizontal scroller */
-  .nav {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    /* row on mobile */
-    flex-wrap: nowrap;
-    /* no wrapping */
-    overflow-x: auto;
-    /* swipe left/right */
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    gap: 8px;
-    padding: 6px 2px;
-    scrollbar-width: none;
-    /* Firefox: hide scrollbar */
-  }
-
-  .nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* WebKit: hide scrollbar */
-
-  .nav-link {
-    flex: 0 0 auto;
-    /* keep natural width */
-    white-space: nowrap;
-    /* no line breaks */
-    padding: 8px 14px;
-    border-radius: 999px;
-    scroll-snap-align: start;
-  }
-
-  /* Auth row compact & centered */
-  .auth-area {
-    width: 100%;
-    margin-left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Tighten page spacing */
-  .main {
-    padding: 12px 14px 24px;
-  }
-
-  .prayer-card {
-    margin: 12px 0;
-    padding: 14px;
-    border-radius: 10px;
-  }
-
-  .card-actions {
-    flex-wrap: wrap;
-  }
-
-  /* Optional: faint separator */
-  .header::after {
-    content: "";
-    display: block;
-    height: 1px;
-    background: var(--border);
-    margin-top: 4px;
-    opacity: 0.6;
-  }
-}
-
-
-
-/* ===== Mobile (≤600px): compact header + tighter nav pills ===== */
-@media (max-width: 600px) {
-
-  /* Header: reduce padding and gaps */
-  .header-inner {
-    grid-template-columns: 1fr;
-    /* title, nav, auth stacked */
-    justify-items: center;
-    gap: 6px;
-    /* ↓ from 10px */
-    padding: 8px 10px;
-    /* ↓ from 10–12px */
-  }
-
-  .logo {
-    font-size: 1.1rem;
-    /* slightly smaller title */
-    line-height: 1.2;
-    margin: 0;
-    /* ensure no extra margin */
-  }
-
-  /* Horizontal scroll nav: tighter spacing */
-  .nav {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    /* keep horizontal */
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    gap: 6px;
-    /* ↓ from 8–10px */
-    padding: 3px 2px;
-    /* ↓ from 6px */
-    scrollbar-width: none;
-  }
-
-  .nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav-link {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    padding: 6px 10px;
-    /* ↓ from 8–14px */
-    border-radius: 999px;
-    font-size: 0.95rem;
-    /* keeps readability */
-    scroll-snap-align: start;
-  }
-
-  /* Auth row: compress height */
-  .auth-area {
-    width: 100%;
-    margin-left: 0;
-    display: flex;
-    flex-direction: row;
-    /* keep in one line to save height */
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    /* tighter between name + button */
-  }
-
-  .auth-area .btn {
-    /* smaller button */
-    padding: 6px 10px;
-    font-size: 0.9rem;
-    line-height: 1.1;
-  }
-
-  .auth-area .user-name {
-    font-size: 0.9rem;
-  }
-
-  /* Optional: tighten page spacing below header a touch */
-  .main {
-    padding: 10px 12px 22px;
-  }
-
-  /* Optional: tone down the separator height */
-  .header::after {
-    height: 1px;
-    opacity: 0.5;
-    margin-top: 2px;
-  }
-}
-
-
-/* Getting this file to update
-
-/* Compact icon buttons */
-.btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 32px;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-}
-
-.btn-icon:hover {
-  background: var(--bg-elevated);
-  color: var(--text);
-}
-
-.btn-icon.danger {
-  color: #ff5b5b;
-  border-color: rgba(255, 91, 91, 0.35);
-}
-
-.btn-icon.danger:hover {
-  background: rgba(255, 91, 91, 0.08);
-}
-
-
-/* --- Nav width + compact pills (desktop & mobile) --- */
-.header-inner .nav {
-  min-width: 0;
-  /* allow flex children to shrink inside the grid column */
-}
-
-/* Base pill: tighter horizontally */
-.nav-link {
-  display: inline-flex;
-  /* removes stray inline spacing, centers text vertically */
-  align-items: center;
-  height: 30px;
-  /* consistent compact height */
-  padding: 0 8px;
-  /* ↓ tighter left/right */
-  line-height: 1;
-  /* avoid extra vertical space */
-  font-size: 0.95rem;
-  /* keep readable but compact */
-  border-radius: 999px;
-  box-sizing: border-box;
-  /* ensures borders won’t add to width */
-}
-
-/* Active pill: no extra width compared to base */
-.nav-link.active {
-  /* Keep same padding/height as .nav-link */
-  color: var(--accent);
-  background: var(--accent-glow);
-  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
-}
-
-/* Desktop/tablet: avoid massive gaps so neighbors are visible */
-.nav {
-  gap: 6px;
-  /* ↓ from 0.5rem */
-}
-
-/* ===== Mobile (≤600px): slim horizontal scroller ===== */
-@media (max-width: 600px) {
-  .nav {
-    gap: 6px;
-    /* already compact */
-    padding: 4px 2px;
-    /* small inner padding for the scroll container */
-  }
-
-  .nav-link {
+    font-size: 1rem;
+    padding: 0 6px;
     height: 28px;
-    /* a hair shorter on phones */
-    padding: 0 7px;
-    /* narrower pills so neighbors show */
-    font-size: 0.9rem;
-    /* still readable, more compact */
+  }
+
+  .auth-area {
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .main {
+    padding: 12px;
+  }
+
+  .prayer-card {
+    margin: 12px 0;
+    padding: 14px;
+    border-radius: 10px;
   }
 }
