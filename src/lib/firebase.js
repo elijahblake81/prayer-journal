@@ -25,8 +25,8 @@ import {
   orderBy,
   serverTimestamp,
   increment,
+  writeBatch,      // ✅ added (for atomic publish/unpublish)
 } from 'firebase/firestore'
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCDZj4focomxoIizJv0tIq9iUMY4X3NSfg",
@@ -88,9 +88,16 @@ export const db = initializeFirestore(app, {
   }),
 })
 
-
 const prayersCol = (uid) => collection(db, 'users', uid, 'prayers')
 
+// ---- Helpers (new) ----
+function normalizeTags(tags) {
+  if (Array.isArray(tags)) return tags
+  if (typeof tags === 'string') {
+    return tags.split(',').map(t => t.trim()).filter(Boolean)
+  }
+  return []
+}
 
 export async function addPrayer(uid, prayer) {
   return addDoc(prayersCol(uid), {
@@ -99,17 +106,11 @@ export async function addPrayer(uid, prayer) {
     category:   prayer.category ?? 'General',
     scripture:  prayer.scripture ?? '',
     // store tags as array; accept comma-separated string too
-    tags: Array.isArray(prayer.tags)
-      ? prayer.tags
-      : (typeof prayer.tags === 'string' && prayer.tags.trim().length
-          ? prayer.tags.split(',').map(t => t.trim()).filter(Boolean)
-          : []),
+    tags: normalizeTags(prayer.tags),
 
-    
     answered:   false, // boolean when not answered; object {date,notes} when answered
-     createdAt:  serverTimestamp(),
-     updatedAt:  serverTimestamp(),
-
+    createdAt:  serverTimestamp(),
+    updatedAt:  serverTimestamp(),
   })
 }
 
@@ -122,15 +123,19 @@ export async function getPrayerById(uid, id) {
 
 export async function savePrayer(uid, id, patch) {
   const ref = doc(db, 'users', uid, 'prayers', id)
-  return setDoc(ref, { ...patch, updatedAt: serverTimestamp() }, { merge: true })
+  // normalize tags if someone passed a string from a form
+  const clean = {
+    ...patch,
+    ...(patch.tags !== undefined ? { tags: normalizeTags(patch.tags) } : {}),
+    updatedAt: serverTimestamp(),
+  }
+  return setDoc(ref, clean, { merge: true })
 }
 
 export async function removePrayer(uid, id) {
   const ref = doc(db, 'users', uid, 'prayers', id)
   return deleteDoc(ref)
 }
-
-
 
 export function subscribePrayers(uid, cb) {
   const q = query(prayersCol(uid), orderBy('createdAt', 'desc'))
@@ -139,7 +144,6 @@ export function subscribePrayers(uid, cb) {
     cb(items)
   })
 }
-
 
 // Atomically increment prayedCount and set lastPrayedAt server-side
 export async function incrementPrayedCount(uid, id) {
@@ -151,14 +155,12 @@ export async function incrementPrayedCount(uid, id) {
   })
 }
 
-
 // --------------------------
 // Public sharing (opt-in)
 // --------------------------
 
 const publicCol = () => collection(db, 'publicPrayers')
-const publicPrayersCol = () => collection(db, 'publicPrayers');
-const publicPrayerDoc  = (id) => doc(db, 'publicPrayers', id);
+const publicPrayerDoc = (id) => doc(db, 'publicPrayers', id)
 
 // Build a safe, public copy of a private prayer
 function buildPublicDoc(uid, prayer) {
@@ -168,35 +170,44 @@ function buildPublicDoc(uid, prayer) {
     content: prayer.content || '',
     category: prayer.category || 'General',
     scripture: prayer.scripture || '',
-    tags: Array.isArray(prayer.tags) ? prayer.tags : [],
+    tags: normalizeTags(prayer.tags),              // ✅ robust tags
     isAnswered: !!prayer.answered,
     answeredAt: prayer.answered?.date || null,
-    // public analytics (optional, reset at publish time)
+    // public analytics (optional, reset/initialize at publish time)
     prayedCount: Number(prayer.prayedCount || 0),
     lastPrayedAt: prayer.lastPrayedAt || null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    // Optional: display name if you want attribution
-    // displayName: auth.currentUser?.displayName || null,
+    // displayName: auth.currentUser?.displayName || null, // optional
   }
 }
 
-// Publish (make public): create a public copy and store its id on the private doc
+// ✅ Publish (atomic): pre-create public doc id and batch both writes
 export async function publishPrayer(uid, privatePrayer) {
-  const pubRef = await addDoc(publicCol(), buildPublicDoc(uid, privatePrayer))
-  await savePrayer(uid, privatePrayer.id, { publicId: pubRef.id })
+  const pubRef = doc(publicCol())  // pre-generate id
+  const privRef = doc(db, 'users', uid, 'prayers', privatePrayer.id)
+  const batch = writeBatch(db)
+
+  batch.set(pubRef, buildPublicDoc(uid, { ...privatePrayer, id: privatePrayer.id }))
+  batch.set(privRef, { publicId: pubRef.id, updatedAt: serverTimestamp() }, { merge: true })
+
+  await batch.commit()
   return pubRef.id
 }
 
-// Unpublish (unshare): delete public copy and clear the reference
+// ✅ Unpublish (atomic): delete public doc and clear private reference
 export async function unpublishPrayer(uid, privatePrayer) {
   if (!privatePrayer?.publicId) return
-  const ref = doc(db, 'publicPrayers', privatePrayer.publicId)
-  await deleteDoc(ref)
-  await savePrayer(uid, privatePrayer.id, { publicId: null })
+  const pubRef = doc(db, 'publicPrayers', privatePrayer.publicId)
+  const privRef = doc(db, 'users', uid, 'prayers', privatePrayer.id)
+
+  const batch = writeBatch(db)
+  batch.delete(pubRef)
+  batch.set(privRef, { publicId: null, updatedAt: serverTimestamp() }, { merge: true })
+  await batch.commit()
 }
 
-// Optional: mirror selected edits to the public copy, if already public
+// ✅ Optional: mirror selected edits to the public copy, if already public
 export async function updatePublicFromPrivate(uid, privatePrayer) {
   if (!privatePrayer?.publicId) return
   const ref = doc(db, 'publicPrayers', privatePrayer.publicId)
@@ -204,11 +215,10 @@ export async function updatePublicFromPrivate(uid, privatePrayer) {
     content: privatePrayer.content || '',
     category: privatePrayer.category || 'General',
     scripture: privatePrayer.scripture || '',
-    tags: Array.isArray(privatePrayer.tags) ? privatePrayer.tags : [],
+    tags: normalizeTags(privatePrayer.tags),       // ✅ robust tags
     isAnswered: !!privatePrayer.answered,
     answeredAt: privatePrayer.answered?.date || null,
-    prayedCount: Number(privatePrayer.prayedCount || 0),
-    lastPrayedAt: privatePrayer.lastPrayedAt || null,
+    // Do NOT write prayedCount/lastPrayedAt here unless you intend to override analytics
     updatedAt: serverTimestamp(),
   }
   await setDoc(ref, patch, { merge: true })
@@ -223,15 +233,12 @@ export function subscribePublicPrayers(cb, onError) {
   }, onError)
 }
 
-
-
+// Public “Prayed” (rules expect prayedCount + lastPrayedAt + updatedAt)
 export async function incrementPublicPrayedCount(publicId) {
   const ref = doc(db, 'publicPrayers', publicId)
   await updateDoc(ref, {
     prayedCount: increment(1),
     lastPrayedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-
-  });
+  })
 }
-
