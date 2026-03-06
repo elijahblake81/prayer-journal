@@ -789,3 +789,59 @@
 }
 
 
+/* --- Nav width + compact pills (desktop & mobile) --- */
+.header-inner .nav {
+  min-width: 0;
+  /* allow flex children to shrink inside the grid column */
+}
+
+/* Base pill: tighter horizontally */
+.nav-link {
+  display: inline-flex;
+  /* removes stray inline spacing, centers text vertically */
+  align-items: center;
+  height: 30px;
+  /* consistent compact height */
+  padding: 0 8px;
+  /* ↓ tighter left/right */
+  line-height: 1;
+  /* avoid extra vertical space */
+  font-size: 0.95rem;
+  /* keep readable but compact */
+  border-radius: 999px;
+  box-sizing: border-box;
+  /* ensures borders won’t add to width */
+}
+
+/* Active pill: no extra width compared to base */
+.nav-link.active {
+  /* Keep same padding/height as .nav-link */
+  color: var(--accent);
+  background: var(--accent-glow);
+  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+/* Desktop/tablet: avoid massive gaps so neighbors are visible */
+.nav {
+  gap: 6px;
+  /* ↓ from 0.5rem */
+}
+
+/* ===== Mobile (≤600px): slim horizontal scroller ===== */
+@media (max-width: 600px) {
+  .nav {
+    gap: 6px;
+    /* already compact */
+    padding: 4px 2px;
+    /* small inner padding for the scroll container */
+  }
+
+  .nav-link {
+    height: 28px;
+    /* a hair shorter on phones */
+    padding: 0 7px;
+    /* narrower pills so neighbors show */
+    font-size: 0.9rem;
+    /* still readable, more compact */
+  }
+}
