@@ -1,3 +1,5 @@
+//src/pages/Reminders.jsx *This page is currently not linked in the app, but you can navigate to it at /reminders. It provides a simple UI for setting daily and weekly prayer reminders using the browser's notification system. The ReminderChecker component (used in App.jsx) will read these settings and trigger notifications at the appropriate times.
+
 import { useState, useEffect } from 'react'
 import { loadReminders, saveReminders } from '../lib/storage'
 import { requestNotificationPermission, showNotification } from '../lib/notifications'

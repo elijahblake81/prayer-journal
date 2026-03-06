@@ -19,7 +19,7 @@ export default function EditPrayer() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { ready, user } = useAuth()
-  //const { showToast } = useToast()              // correct API shape
+  const showToast = useToast()             // correct API shape
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)

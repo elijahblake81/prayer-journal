@@ -1,3 +1,5 @@
+//src/components/PublicPrayerCard.jsx
+
 import { format } from 'date-fns'
 import { incrementPublicPrayedCount } from '../lib/firebase'
 import { useState } from 'react'
@@ -13,7 +15,7 @@ function toJsDate(d) {
 
 export default function PublicPrayerCard({ prayer }) {
   const [busy, setBusy] = useState(false)
-  const { showToast } = useToast()
+  const showToast = useToast()
 
   const createdAt = toJsDate(prayer.createdAt)
   const lastPrayedAt = toJsDate(prayer.lastPrayedAt)
