@@ -314,6 +314,70 @@
   color: var(--text-muted);
 }
 
+
+/* ============================
+   USER MENU (Avatar Dropdown)
+   ============================ */
+
+.user-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.avatar-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.avatar-circle {
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: white;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 140px;
+  z-index: 500;
+  padding: 6px 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
+.menu-item {
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+/* Hide the long name on mobile (keeps avatar-only top bar) */
+@media (max-width: 600px) {
+  .auth-area .user-name {
+    display: none;
+  }
+}
 /* ===========================
    MOBILE LAYOUT (≤600px)  
 

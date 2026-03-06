@@ -8,7 +8,8 @@ import Reflection from './pages/Reflection'
 import ReminderChecker from './components/ReminderChecker'
 import EditPrayer from './pages/EditPrayer'
 import PublicFeed from './pages/PublicFeed'
-import { useAuth } from './lib/AuthProvider'   // for google auth
+import { useAuth } from './lib/AuthProvider'   
+import UserMenu from './components/UserMenu';
 
 export default function App() {
   // ✅ Call the hook at the top level (not inside a function in JSX)
@@ -33,18 +34,17 @@ export default function App() {
 
 
       {/* AUTH AREA (top-right) */}
+      
       <div className="auth-area">
         {!ready ? (
           <span className="user-name">Loading…</span>
         ) : user ? (
-          <>
-            <span className="user-name">{user.displayName || user.email}</span>
-            <button onClick={signOut} className="btn btn-outline">Sign out</button>
-          </>
+          <UserMenu user={user} onSignOut={signOut} />
         ) : (
           <button onClick={signIn} className="btn btn-primary">Sign in with Google</button>
         )}
       </div>
+
     </div>
   </header>
 
