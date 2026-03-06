@@ -12,7 +12,7 @@ export default function PrayerCard({ prayer, onMarkAnswered, onUnmarkAnswered, o
   const isAnswered = !!prayer?.answered
   const [busy, setBusy] = useState(false)
   const { user } = useAuth()
-  const { showToast } = useToast()
+  const showToast = useToast()
 
   const toDate = (d) => {
     if (!d) return null
