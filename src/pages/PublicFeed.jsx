@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { subscribePublicPrayers } from '../lib/firebase'
 import PublicPrayerCard from '../components/PublicPrayerCard'
+import SwipeWrapper from "../components/SwipeWrapper";
 
 export default function PublicFeed() {
   const [items, setItems] = useState([])
@@ -12,6 +13,10 @@ export default function PublicFeed() {
   }, [])
 
   return (
+    <SwipeWrapper
+    prev="/reflection"
+    next="/"
+    >
     <div className="page">
       <div className="page-header">
         <h2>Public Prayers</h2>
@@ -27,5 +32,6 @@ export default function PublicFeed() {
         )}
       </div>
     </div>
+    </SwipeWrapper>
   )
 }

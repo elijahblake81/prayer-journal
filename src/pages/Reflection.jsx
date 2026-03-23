@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { format, parseISO, subDays, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns'
 import PrayerCard from '../components/PrayerCard'
-
+import SwipeWrapper from "../components/SwipeWrapper";
 import { useAuth } from '../lib/AuthProvider'
 import { subscribePrayers, removePrayer, savePrayer } from '../lib/firebase'
 
@@ -71,6 +71,10 @@ export default function Reflection() {
     savePrayer(user.uid, id, { answered: { date, notes } })
 
   return (
+    <SwipeWrapper
+    prev="/"
+    next="/public"
+    >
     <div className="page">
       <h2>Reflection</h2>
 
@@ -116,5 +120,6 @@ export default function Reflection() {
         )}
       </section>
     </div>
+    </SwipeWrapper>
   )
 }
