@@ -6,6 +6,7 @@ import MarkAnsweredModal from '../components/MarkAnsweredModal'
 import { useAuth } from '../lib/AuthProvider'
 import { subscribePrayers, savePrayer, removePrayer } from '../lib/firebase'
 import { useToast } from '../components/ToastProvider'
+import SwipeWrapper from "../components/SwipeWrapper";
 
 export default function PrayerList() {
   const { ready, user } = useAuth()
@@ -69,6 +70,11 @@ export default function PrayerList() {
   const activePrayer = editingId ? prayers.find(p => p.id === editingId) : null
 
   return (
+    <SwipeWrapper
+    prev="/feed"
+    next="/reflection"
+    >
+
     <div className="page">
       <div className="page-header">
         <h2>My Prayers</h2>
@@ -134,5 +140,6 @@ export default function PrayerList() {
         </>
       )}
     </div>
+    </SwipeWrapper>
   )
 }
